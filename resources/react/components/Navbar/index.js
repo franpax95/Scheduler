@@ -1,19 +1,34 @@
 import React, { useContext, useState } from 'react';
+import { Link, NavLink } from 'react-router-dom';
+import { FaUserAlt,FaPowerOff } from 'react-icons/fa';
 
 // import { Context as UserContext } from '../../contexts/UserContext';
 
-import { Link, NavLink } from 'react-router-dom';
+import { 
+    Navbar as StyledNavbar, RightSection,
+    MainLink, DangerLink, StyledLink
+} from './style';
 
-import { FaRegUser } from 'react-icons/fa';
-import { MdLanguage } from 'react-icons/md';
-import { GoSignIn, GoSignOut } from 'react-icons/go';
 
 const Navbar = () => {
     return (
-        <div className="Navbar">
-            <NavLink to="/">Home</NavLink>
-            <NavLink to="/notfound">NotFound</NavLink>
-        </div>
+        <StyledNavbar>
+            <MainLink to="/">
+                TODO List App
+            </MainLink>
+
+            <RightSection>
+                <StyledLink to="/profile">
+                    <FaUserAlt />
+                    Profile
+                </StyledLink>
+                
+                <DangerLink to="/logout">
+                    <FaPowerOff />
+                    Logout
+                </DangerLink>
+            </RightSection>
+        </StyledNavbar>
     );
 }
 
