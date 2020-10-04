@@ -19,7 +19,7 @@ export const Navbar = styled.nav`
 export const RightSection = styled.div`
     position: absolute;
     right: 0;
-    display: flex;
+    display: flex; /** for transition transform: translate() */
 `;
 
 export const MainLink = styled(Link)`
@@ -90,10 +90,5 @@ export const StyledLink = styled(Link)`
         box-shadow: 5px 5px 10px -8px rgba(255,255,255,1);
         transform: translate(1px, 1px);
     }
-`;
-
-export const RightDiv = styled.div`
-    /* float: right;
-    margin-left: auto; */
 `;
 
