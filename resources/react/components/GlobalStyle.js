@@ -45,6 +45,5 @@ export const GlobalStyle = createGlobalStyle`
         overflow-x: hidden; 
         /* overflow-y: scroll;  */
         height: 100%;
-        background-color: lightgray;
     }
 `;

@@ -1,0 +1,25 @@
+.cell-style{
+    height: 70px;
+    width: 100px;
+    position: relative;
+    border: 'solid 1px black';
+    cursor: pointer;
+    border: solid 1px black;
+    transition: background-color .3s;
+}
+.cell-style:hover{
+    background-color: red;
+}
+
+.name-style{
+    font-size: 0.8em;
+    text-align: left;
+}
+
+.date-style{
+    position: absolute;
+    color: darkgray;
+    top: 0;
+    right: 0;
+    font-size: 20px;
+}
