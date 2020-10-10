@@ -3,11 +3,12 @@
 namespace App\Http\Controllers\API;
 
 use Illuminate\Http\Request;
-use App\User;
-use Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
+use Validator;
+use App\Http\Controllers\Controller;
+use App\Models\User;
 
 
 class UserController extends Controller
@@ -20,7 +21,7 @@ class UserController extends Controller
 
         if(auth()->attempt($credentials)){
             $user = Auth::user();
-            $success['token'] = $user->createToken('Scheduler')->acessToken;
+            $success['token'] = $user->createToken('Scheduler')->accessToken;
             return response()->json(['success' => $success], 200);
         }else{
             return response()->json(['error' => 'Unauthorised']);
@@ -55,7 +56,7 @@ class UserController extends Controller
     /**
      * Return current user details
      */
-    public function get(){
+    public function user(){
         $user = Auth::user();
         return response()->json(['success' => $user], 200);
     }
