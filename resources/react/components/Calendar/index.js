@@ -3,8 +3,6 @@ import DayPicker from 'react-day-picker';
 import 'react-day-picker/lib/style.css';
 import './styles.css';
 
-//import prueba
-
 /**
  * returns an object of schedules prepare to display renderDay:
  * currentMonthSchedules = { [day]: name of lists, [day]: name of lists...}
