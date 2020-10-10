@@ -17,7 +17,7 @@ export const GlobalStyle = createGlobalStyle`
         list-style: none;
     }
 
-    a, button {
+    a, button, input[type=submit] {
         -webkit-touch-callout: none;
         -webkit-user-select: none;
         -khtml-user-select: none;
@@ -30,8 +30,8 @@ export const GlobalStyle = createGlobalStyle`
         text-decoration: none;
     }
 
-    button {
-        border: 0;
+    button, input[type=submit] {
+        border: none;
         cursor: pointer;
     }
 
