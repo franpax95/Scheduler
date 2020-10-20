@@ -14,6 +14,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+Route::post('login', 'App\Http\Controllers\API\UserController@login');
+Route::post('register', 'App\Http\Controllers\API\UserController@register');
+Route::post('logout', 'App\Http\Controllers\API\UserController@logout');
+
+Route::middleware('auth:api')->group(function() {
+    Route::get('user', 'App\Http\Controllers\API\UserController@user');
+    Route::get('schedules', 'App\Http\Controllers\API\SchedulesController@index');
+    Route::get('schedules/{id}', 'App\Http\Controllers\API\SchedulesController@find');
 });

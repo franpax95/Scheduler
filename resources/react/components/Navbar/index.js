@@ -1,8 +1,7 @@
 import React, { useContext, useState } from 'react';
-import { Link, NavLink } from 'react-router-dom';
 import { FaUserAlt,FaPowerOff } from 'react-icons/fa';
 
-// import { Context as UserContext } from '../../contexts/UserContext';
+import { Context as UserContext } from '../../contexts/UserContext';
 
 import { 
     Navbar as StyledNavbar, RightSection,
@@ -11,6 +10,8 @@ import {
 
 
 const Navbar = () => {
+    const { isAuth, user, logout } = useContext(UserContext);
+    
     return (
         <StyledNavbar>
             <MainLink to="/">
@@ -23,7 +24,7 @@ const Navbar = () => {
                     Profile
                 </StyledLink>
                 
-                <DangerLink to="/logout">
+                <DangerLink to="/logout" onClick={() => logout()}>
                     <FaPowerOff />
                     Logout
                 </DangerLink>
