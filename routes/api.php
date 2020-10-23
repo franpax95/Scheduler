@@ -20,6 +20,6 @@ Route::post('logout', 'App\Http\Controllers\API\UserController@logout');
 
 Route::middleware('auth:api')->group(function() {
     Route::get('user', 'App\Http\Controllers\API\UserController@user');
-    Route::get('schedules', 'App\Http\Controllers\API\SchedulesController@index');
+    Route::get('schedules', 'App\Http\Controllers\API\SchedulesController@get');
     Route::get('schedules/{id}', 'App\Http\Controllers\API\SchedulesController@find');
 });
