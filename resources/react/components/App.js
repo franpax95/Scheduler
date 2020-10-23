@@ -9,6 +9,8 @@ import Navbar from '../components/Navbar';
 
 import Login from '../pages/Login';
 import Home from '../pages/Home';
+import DateSchedules from '../pages/DateSchedules';
+// import Schedule from '../pages/Schedule';
 import NotFound from '../pages/NotFound';
 
 /** styled-components */
@@ -28,7 +30,7 @@ const AuthRoute = ({ path, component, isAuth = false }) =>
 /**
  * main
  */
-const App = () => {
+const App = props => {
     /** user state */
     const { isAuth, user, getUserDetails } = useContext(UserContext);
 
@@ -52,7 +54,10 @@ const App = () => {
                     <Switch location={location}>
                         <Route exact path="/login" component={Login} />
 
+                        {/* <AuthRoute exact path="/schedule/:id" component={Schedule} isAuth={isAuth} /> */}
+                        <AuthRoute exact path="/:date" component={DateSchedules} isAuth={isAuth} />
                         <AuthRoute exact path="/" component={Home} isAuth={isAuth} />
+        
                         <AuthRoute component={NotFound} isAuth={isAuth} />
                     </Switch>
                 </div>
