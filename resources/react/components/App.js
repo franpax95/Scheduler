@@ -16,7 +16,7 @@ import NotFound from '../pages/NotFound';
 /** styled-components */
 const SpringWrapper = styled.div`
     width: 100%;
-    height: 100%;
+    height: calc(100% - 80px);
     position: absolute;
 `;
 const AnimatedSpringWrapper = animated(SpringWrapper);

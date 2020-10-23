@@ -13,7 +13,11 @@ export const Navbar = styled.nav`
     justify-content: center;
     align-items: center;
 
-    background-color: cornflowerblue;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.15) 0%, rgba(0,0,0,0.15) 100%), radial-gradient(at top center, rgba(255,255,255,0.40) 0%, rgba(0,0,0,0.40) 120%) #989898;
+    background-blend-mode: multiply,multiply;
+    -webkit-box-shadow: 0px 5px 40px -10px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 5px 40px -10px rgba(0,0,0,0.75);
+    box-shadow: 0px 5px 40px -10px rgba(0,0,0,0.75)
 `;
 
 export const RightSection = styled.div`
@@ -60,6 +64,10 @@ export const DangerLink = styled(Link)`
         box-shadow: 5px 5px 10px -8px rgba(255,0,0,1);
         transform: translate(1px, 1px);
     }
+
+    & *{
+        color: white;
+    }
 `;
 
 export const StyledLink = styled(Link)`
@@ -89,6 +97,10 @@ export const StyledLink = styled(Link)`
         -moz-box-shadow: 5px 5px 10px -8px rgba(255,255,255,1);
         box-shadow: 5px 5px 10px -8px rgba(255,255,255,1);
         transform: translate(1px, 1px);
+    }
+
+    & *{
+        color: white;
     }
 `;
 

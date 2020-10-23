@@ -5,6 +5,8 @@ import { Context } from '../../contexts/Context';
 import { date2String } from '../../util';
 import Calendar from '../../components/Calendar';
 
+import { StyledHome } from './style';
+
 
 const Home = props => {
     const { loading, error, schedules, getSchedules } = useContext(Context);
@@ -26,15 +28,16 @@ const Home = props => {
         props.history.push(`/${date2String(day)}`);
     }
 
+    if(loading) return 'Loading...';
     return (
-        <div className="Home">
+        <StyledHome>
             <Calendar 
                 schedules={schedules}
                 month={month}
                 onMonthChange={onMonthChange}
                 handleDayClick={handleDayClick}
             />
-        </div>
+        </StyledHome>
     );
 }
 
