@@ -42,7 +42,7 @@ class SchedulesController extends Controller
             $schedule = Schedule::findOrFail($id);
             
             if($schedule->user_id == $user->id){
-                $tasks = Taks::where('schedule_id', $schedule->id)->orderBy('order', 'desc')->get();
+                $tasks = Task::where('schedule_id', $schedule->id)->orderBy('order', 'asc')->get();
                 $schedule->tasks = $tasks;
                 return response()->json(['success' => $schedule]);
             }else{

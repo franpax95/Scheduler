@@ -6,6 +6,8 @@ const Context = React.createContext([{}, () => {}]);
 const Provider = ({ children }) => {
     const [schedules, setSchedules] = useState([]);
     const [dateSchedules, setDateSchedules] = useState([]);
+    const [schedule, setSchedule] = useState({});
+
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
@@ -16,9 +18,7 @@ const Provider = ({ children }) => {
         setLoading(true);
 
         try{
-            const config = { headers: { Authorization: `Bearer ${token()}` } };
-            const { data } = await axios.get('/api/schedules', config);
-
+            const { data } = await axios.get('/api/schedules', config());
             setSchedules(data.success);
             setLoading(false);
         }catch(error){
@@ -42,9 +42,21 @@ const Provider = ({ children }) => {
         }
     }
 
+    const getSchedule = async id => {
+        setLoading(true);
+
+        try{
+            const { data } = await axios.get(`/api/schedules/${id}`, config());
+            setSchedule(data.success);
+            setLoading(false);
+        }catch(error){
+            setError(error);
+        }
+    }
+
     const value = {
-        schedules, dateSchedules, loading, error,
-        getSchedules, getDateSchedules
+        schedules, dateSchedules, schedule, loading, error,
+        getSchedules, getDateSchedules, getSchedule
     };
 
     return <Context.Provider value={value}>{children}</Context.Provider>;

@@ -68,7 +68,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Cocina',
             'order' => 0,
             'completed' => true,
-            'schedule_id' => 1,
+            'schedule_id' => 2,
             'user_id' => 1,
         ]);
 
