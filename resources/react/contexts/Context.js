@@ -34,6 +34,7 @@ const Provider = ({ children }) => {
 
             try{
                 const { data } = await axios.get(`/api/schedules/date/${date}`, config());
+                console.log(data.success);
                 setDateSchedules(data.success);
                 setLoading(false);
             }catch(error){

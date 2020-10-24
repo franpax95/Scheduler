@@ -22,7 +22,7 @@ const getMonthFormattedSchedules = (schedules, month) => {
             }else{
                 currentMonthSchedules = {
                     ...currentMonthSchedules,
-                    [date.getDate()]: new Array(name, name, name)
+                    [date.getDate()]: new Array(name)
                 };
             }
             
@@ -44,7 +44,7 @@ const CalendarNavbar = ({ month, nextMonth, previousMonth, onPreviousClick, onNe
             ← {prev.slice(0, 3)}
           </button>
 
-          <div class="main">
+          <div className="main">
             {`${months[month.getMonth()]} ${month.getFullYear()}`}
           </div>
 

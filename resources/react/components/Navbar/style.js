@@ -34,6 +34,16 @@ export const MainLink = styled(Link)`
     font-size: 32px;
     font-weight: bold;
     text-transform: uppercase;
+
+    transition: color .2s;
+
+    &:hover{
+        color: lightgray;
+    }
+
+    &:active{
+        color: darkgray;
+    }
 `;
 
 export const DangerLink = styled(Link)`
