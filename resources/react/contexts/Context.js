@@ -73,22 +73,15 @@ const Provider = ({ children }) => {
                 ...schedule,
                 tasks: [
                     ...schedule.tasks,
-                    { name: '', completed: false, order: schedule.tasks.length }
+                    { name: '', completed: false, order: schedule.tasks.length, schedule_id: schedule.id }
                 ]
             });
-            console.log({
-                ...schedule,
-                tasks: [
-                    ...schedule.tasks,
-                    { name: '', completed: false, order: schedule.tasks.length }
-                ]
-            })
         }else{
             setSchedule({
                 ...schedule,
                 tasks: [
-                    { name: '', completed: false, order: 0 },
-                    ...taskOrderPlus()
+                    { name: '', completed: false, order: 0, schedule_id: schedule.id },
+                    ...taskOrderIncrement(0)
                 ]
             });
         }
@@ -118,16 +111,48 @@ const Provider = ({ children }) => {
         });
     }
 
-    const taskOrderPlus = () => {
+    const submitTask = async task => {
+        setLoading(true);
+        
+        try {
+            if(!task.id){
+                const { data } = await axios.post(`/api/tasks`, { ...task, schedule_id: schedule.id }, config());
+                setSchedule({
+                    ...schedule,
+                    tasks: [
+                        ...schedule.tasks.slice(0, task.order),
+                        data.success,
+                        ...schedule.tasks.slice(task.order + 1, schedule.tasks.length)
+                    ]
+                });
+                setLoading(false);
+            }
+
+        }catch(error){
+            console.error(error);
+            setError(error);
+        }
+    }
+
+
+    /**
+     * Subfunctions
+     */
+    const taskOrderIncrement = order => {
         const tasks = new Array(schedule.tasks.length);
-        schedule.tasks.map((task, key) => { tasks[key] = { ...task, order: task.order + 1 } });
+        schedule.tasks.map((task, key) => { 
+            tasks[key] = (task.order >= order) ? { ...task, order: task.order + 1 } : task;
+        });
         return tasks;
     }
 
+    /**
+     * value & provider
+     */
     const value = {
         schedules, dateSchedules, schedule, loading, error,
         getSchedules, getDateSchedules, getSchedule, changeTask, addTask,
-        reorderTasks, deleteTask
+        reorderTasks, deleteTask, submitTask
     };
 
     return <Context.Provider value={value}>{children}</Context.Provider>;

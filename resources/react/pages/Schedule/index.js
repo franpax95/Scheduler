@@ -16,7 +16,7 @@ import { GoPlus } from 'react-icons/go';
 
 
 const Schedule = props => {
-    const { loading, error, schedule, getSchedule, changeTask, addTask, reorderTasks, deleteTask } = useContext(Context);
+    const { loading, error, schedule, getSchedule, changeTask, addTask, reorderTasks, deleteTask, submitTask } = useContext(Context);
     const ref = useRef();
     const [newElementOrder, setNewElementOrder] = useState(-1);
 
@@ -38,6 +38,7 @@ const Schedule = props => {
     }
 
     const onBlurNameTaskChange = (e, task) => {
+        submitTask(task);
         //console.log(task, schedule.tasks);
     }
 
