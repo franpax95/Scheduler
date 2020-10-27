@@ -10,6 +10,7 @@ export const GlobalStyle = createGlobalStyle`
         outline: 0;
         -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
         
+        color: #262626;
         font-family: 'Roboto', sans-serif;
     }
 
@@ -35,15 +36,22 @@ export const GlobalStyle = createGlobalStyle`
         cursor: pointer;
     }
 
+    html, body, #app{
+        height: 100%;
+        overflow: hidden;
+    }
+
     html, body, #app, .App{
         width: 100%;
-        height: 100%;
         position: relative;
     }
 
     .App{ 
-        overflow-x: hidden; 
-        /* overflow-y: scroll;  */
         height: 100%;
+        overflow-x: hidden;
+        
+        background-color: #E4E4E1;
+        background-image: radial-gradient(at top center, rgba(255,255,255,0.03) 0%, rgba(0,0,0,0.03) 100%), linear-gradient(to top, rgba(255,255,255,0.1) 0%, rgba(143,152,157,0.60) 100%);
+        background-blend-mode: normal, multiply;
     }
 `;

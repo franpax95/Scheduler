@@ -21,7 +21,6 @@ const Login = () => {
 
     const onSubmit = e => {
         e.preventDefault();
-        console.log(formData);
         login(formData);
     }
 
@@ -33,9 +32,9 @@ const Login = () => {
         <div className="Login">
             <h1>Login form</h1>
             <UserForm onSubmit={onSubmit}>
-                <label for="name">Name:</label>
+                <label htmlFor="name">Name:</label>
                 <UserFormInput type="email" name="email" placeholder="Email" onChange={onChange} />
-                <label for="name">Name:</label>
+                <label htmlFor="name">Name:</label>
                 <UserFormInput type="password" name="password" placeholder="Password" onChange={onChange} />
                 <UserFormSubmit value="Save" />
             </UserForm>

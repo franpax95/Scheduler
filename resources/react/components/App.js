@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Route, Switch, useLocation, Redirect } from 'react-router-dom';
 import { useTransition, animated, config } from 'react-spring';
 import styled from 'styled-components';
@@ -16,7 +16,7 @@ import NotFound from '../pages/NotFound';
 /** styled-components */
 const SpringWrapper = styled.div`
     width: 100%;
-    height: 100%;
+    height: calc(100% - 80px);
     position: absolute;
 `;
 const AnimatedSpringWrapper = animated(SpringWrapper);
@@ -25,7 +25,14 @@ const AnimatedSpringWrapper = animated(SpringWrapper);
 const AuthRoute = ({ path, component, isAuth = false }) => 
     isAuth
         ? <Route exact path={path} component={component} />
-        : <Redirect to="/login" />
+        : <Redirect to="/login" />;
+
+/** render DateSchedules if the arg is a date in format y-m-d with the location.pathname */
+const testDateArg = ({ pathname }) => {
+    const datePatt = /([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))/;
+    const arg = pathname.slice(1, pathname.length);
+    return datePatt.test(arg);
+}
 
 /**
  * main
@@ -55,7 +62,7 @@ const App = props => {
                         <Route exact path="/login" component={Login} />
 
                         <AuthRoute exact path="/schedule/:id" component={Schedule} isAuth={isAuth} />
-                        <AuthRoute exact path="/:date" component={DateSchedules} isAuth={isAuth} />
+                        {testDateArg(location) && <AuthRoute exact path="/:date" component={DateSchedules} isAuth={isAuth} />}
                         <AuthRoute exact path="/" component={Home} isAuth={isAuth} />
         
                         <AuthRoute component={NotFound} isAuth={isAuth} />
