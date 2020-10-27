@@ -25,7 +25,7 @@ class SchedulesController extends Controller
     public function getByDate($date){
         $user = Auth::user();
         $schedules = Schedule::where('user_id', $user->id)
-            ->where('date', $date)    //REVISAR el tema de las fechas
+            ->where('date', $date)
             ->orderBy('name', 'desc')
             ->get();
 
