@@ -55,9 +55,79 @@ const Provider = ({ children }) => {
         }
     }
 
+    const changeTask = ({ id, name, completed, order }) => {
+        const index = schedule.tasks.findIndex(task => task.order === order);
+        setSchedule({
+            ...schedule,
+            tasks: [
+                ...schedule.tasks.slice(0, index),
+                { id, name, completed, order },
+                ...schedule.tasks.slice(index + 1, schedule.tasks.length)
+            ]
+        });
+    }
+
+    const addTask = order => {
+        if(order === schedule.tasks.length){
+            setSchedule({
+                ...schedule,
+                tasks: [
+                    ...schedule.tasks,
+                    { name: '', completed: false, order: schedule.tasks.length }
+                ]
+            });
+            console.log({
+                ...schedule,
+                tasks: [
+                    ...schedule.tasks,
+                    { name: '', completed: false, order: schedule.tasks.length }
+                ]
+            })
+        }else{
+            setSchedule({
+                ...schedule,
+                tasks: [
+                    { name: '', completed: false, order: 0 },
+                    ...taskOrderPlus()
+                ]
+            });
+        }
+    }
+
+    const deleteTask = order => {
+        const index = schedule.tasks.findIndex(task => task.order === order);
+        setSchedule({
+            ...schedule,
+            tasks: [
+                ...schedule.tasks.slice(0, index),
+                ...schedule.tasks.slice(index + 1, schedule.tasks.length)
+            ]
+        });
+    }
+
+    const reorderTasks = (order1, order2) => {
+        setSchedule({
+            ...schedule,
+            tasks: [
+                ...schedule.tasks.slice(0, order1),
+                { ... schedule.tasks[order2], order: order2 },
+                ...schedule.tasks.slice(order1 + 1, order2),
+                { ...schedule.tasks[order1], order: order1 },
+                ...schedule.tasks.slice(order2 + 1, schedule.tasks.length)
+            ]
+        });
+    }
+
+    const taskOrderPlus = () => {
+        const tasks = new Array(schedule.tasks.length);
+        schedule.tasks.map((task, key) => { tasks[key] = { ...task, order: task.order + 1 } });
+        return tasks;
+    }
+
     const value = {
         schedules, dateSchedules, schedule, loading, error,
-        getSchedules, getDateSchedules, getSchedule
+        getSchedules, getDateSchedules, getSchedule, changeTask, addTask,
+        reorderTasks, deleteTask
     };
 
     return <Context.Provider value={value}>{children}</Context.Provider>;
