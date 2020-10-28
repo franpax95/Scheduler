@@ -1,6 +1,9 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Context } from '../../contexts/Context';
 
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 import {
     StyledTaskRowButton,
     StyledTaskInput,
@@ -16,7 +19,9 @@ import { GoPlus } from 'react-icons/go';
 
 
 const Schedule = props => {
-    const { loading, error, schedule, getSchedule, changeTask, addTask, reorderTasks, deleteTask } = useContext(Context);
+    const { loading, error, schedule, successToast, errorToast,
+        getSchedule, changeTask, addTask, reorderTasks, deleteTask, submitTask, resetToasts
+     } = useContext(Context);
     const ref = useRef();
     const [newElementOrder, setNewElementOrder] = useState(-1);
 
@@ -31,23 +36,32 @@ const Schedule = props => {
     }, []);
 
     const onNameTaskChange = (e, task) => {
-        changeTask({
-            ...task,
-            name: e.target.value
-        });
+        changeTask({ ...task, name: e.target.value });
+        console.log('onchange', task);
     }
 
     const onBlurNameTaskChange = (e, task) => {
-        //console.log(task, schedule.tasks);
+        console.log(task);
+        submitTask(task);
     }
 
-    const onCompletedTaskChange = (e, task) => {
-        changeTask({
-            ...task,
-            completed: Number(e.target.checked)
-        });
+    useEffect(() => {
+        if(errorToast.length){
+            toast.error(errorToast, { style: {
+                borderRadius: '0'
+            }});
+        }else if(successToast.length){
+            toast.success(successToast, { style: {
+                borderRadius: '0'
+            }});
+        }
+        resetToasts();
+    }, [successToast, errorToast]);
 
-        //submit data
+    const onCompletedTaskChange = (e, task) => {
+        const newTask = { ...task, completed: Number(e.target.checked) };
+        changeTask(newTask);
+        submitTask(newTask);
     }
 
     const onAddTaskClick = order => {
@@ -64,6 +78,16 @@ const Schedule = props => {
     
     return (<>
         {schedule.id === Number(props.match.params.id) && <StyledSchedule>
+            <ToastContainer 
+                position="top-center"
+                autoClose={1500}
+                hideProgressBar
+                closeOnClick
+                oPauseOnHover={false}
+                draggable
+                progress={undefined}
+            />
+
             <StyledTitle>{schedule.name}</StyledTitle>
 
             <StyledTaskRowButton onClick={() => onAddTaskClick(0)}>

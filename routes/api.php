@@ -20,7 +20,11 @@ Route::post('logout', 'App\Http\Controllers\API\UserController@logout');
 
 Route::middleware('auth:api')->group(function() {
     Route::get('user', 'App\Http\Controllers\API\UserController@user');
+
     Route::get('schedules', 'App\Http\Controllers\API\SchedulesController@get');
     Route::get('schedules/date/{date}', 'App\Http\Controllers\API\SchedulesController@getByDate');
     Route::get('schedules/{id}', 'App\Http\Controllers\API\SchedulesController@find');
+
+    Route::post('tasks', 'App\Http\Controllers\API\TasksController@store');
+    Route::post('tasks/{id}', 'App\Http\Controllers\API\TasksController@update');
 });
