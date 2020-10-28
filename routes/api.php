@@ -26,4 +26,5 @@ Route::middleware('auth:api')->group(function() {
     Route::get('schedules/{id}', 'App\Http\Controllers\API\SchedulesController@find');
 
     Route::post('tasks', 'App\Http\Controllers\API\TasksController@store');
+    Route::post('tasks/{id}', 'App\Http\Controllers\API\TasksController@update');
 });

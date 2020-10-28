@@ -11,6 +11,9 @@ const Provider = ({ children }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
+    const [successToast, setSuccessToast] = useState('');
+    const [errorToast, setErrorToast] = useState('');
+
     const token = () => sessionStorage.getItem('token');
     const config = () => ({ headers: { Authorization: `Bearer ${token()}` } });
 
@@ -73,14 +76,14 @@ const Provider = ({ children }) => {
                 ...schedule,
                 tasks: [
                     ...schedule.tasks,
-                    { name: '', completed: false, order: schedule.tasks.length, schedule_id: schedule.id }
+                    { name: '', completed: 0, order: schedule.tasks.length, schedule_id: schedule.id }
                 ]
             });
         }else{
             setSchedule({
                 ...schedule,
                 tasks: [
-                    { name: '', completed: false, order: 0, schedule_id: schedule.id },
+                    { name: '', completed: 0, order: 0, schedule_id: schedule.id },
                     ...taskOrderIncrement(0)
                 ]
             });
@@ -96,6 +99,8 @@ const Provider = ({ children }) => {
                 ...schedule.tasks.slice(index + 1, schedule.tasks.length)
             ]
         });
+        
+        setSuccessToast('Task deleted successfully');
     }
 
     const reorderTasks = (order1, order2) => {
@@ -112,11 +117,13 @@ const Provider = ({ children }) => {
     }
 
     const submitTask = async task => {
+        console.log('submit', task.name, task);
         setLoading(true);
         
         try {
             if(!task.id){
                 const { data } = await axios.post(`/api/tasks`, { ...task, schedule_id: schedule.id }, config());
+
                 setSchedule({
                     ...schedule,
                     tasks: [
@@ -125,13 +132,22 @@ const Provider = ({ children }) => {
                         ...schedule.tasks.slice(task.order + 1, schedule.tasks.length)
                     ]
                 });
-                setLoading(false);
+            }else{
+                await axios.post(`/api/tasks/${task.id}`, task, config());
             }
+
+            setLoading(false);
+            setSuccessToast(`Task ${task.id ? 'upload' : 'created' } successfully`);
 
         }catch(error){
             console.error(error);
-            setError(error);
+            setErrorToast(error);
         }
+    }
+
+    const resetToasts = () => {
+        if(successToast.length) setSuccessToast('');
+        if(errorToast.length)   setErrorToast('');
     }
 
 
@@ -150,9 +166,9 @@ const Provider = ({ children }) => {
      * value & provider
      */
     const value = {
-        schedules, dateSchedules, schedule, loading, error,
+        schedules, dateSchedules, schedule, loading, error, successToast, errorToast,
         getSchedules, getDateSchedules, getSchedule, changeTask, addTask,
-        reorderTasks, deleteTask, submitTask
+        reorderTasks, deleteTask, submitTask, resetToasts
     };
 
     return <Context.Provider value={value}>{children}</Context.Provider>;

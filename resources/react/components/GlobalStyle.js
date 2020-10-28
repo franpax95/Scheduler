@@ -10,7 +10,6 @@ export const GlobalStyle = createGlobalStyle`
         outline: 0;
         -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
         
-        color: #262626;
         font-family: 'Roboto', sans-serif;
     }
 

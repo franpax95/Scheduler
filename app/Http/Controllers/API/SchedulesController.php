@@ -35,7 +35,7 @@ class SchedulesController extends Controller
     /**
      * Return a schedule find by id, with tasks
      */
-    public function find($id){
+    public function find(int $id){
         $user = Auth::user();
 
         try{

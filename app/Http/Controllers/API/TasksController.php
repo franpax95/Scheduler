@@ -35,7 +35,7 @@ class TasksController extends Controller
     /**
      * Return a task find by id
      */
-    public function find($id){
+    public function find(int $id){
         $user = Auth::user();
 
         try{
@@ -63,6 +63,19 @@ class TasksController extends Controller
             'created_at' => Carbon::now()
         ]);
 
+        $task = Task::find($id);
+
+        return response()->json(['success' => $task], 200);
+    }
+
+    public function update($id, Request $request) {
+        $user = Auth::user();
+
+        Task::where('id', $id)->update([
+            'name' => $request->name,
+            'completed' => $request->completed,
+            'updated_at' => Carbon::now()
+        ]);
         $task = Task::find($id);
 
         return response()->json(['success' => $task], 200);
