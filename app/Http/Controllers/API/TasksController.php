@@ -46,7 +46,9 @@ class TasksController extends Controller
         }
     }
 
-
+    /**
+     * store a new task
+     */
     public function store(Request $request) {
         $user = Auth::user();
 
@@ -70,6 +72,9 @@ class TasksController extends Controller
     }
 
     
+    /**
+     * update a task info (not order)
+     */
     public function update($id, Request $request) {
         $user = Auth::user();
 
@@ -81,5 +86,26 @@ class TasksController extends Controller
         $task = Task::find($id);
 
         return response()->json(['success' => $task], 200);
+    }
+
+    /**
+     * delete a task
+     */
+    public function delete($id) {
+        try{
+            $task = Task::findOrFail($id);
+
+            DB::table('tasks')
+                ->where('schedule_id', $task->schedule_id)
+                ->where('order', '>', $task->order)
+                ->decrement('order');
+
+            $task->delete();
+
+            return response()->json(null, 204);
+
+        }catch(ModelNotFoundException $e) {
+            return response()->json(['error' => 'The task does not exist'], 404);
+        }
     }
 }
