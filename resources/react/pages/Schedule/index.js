@@ -38,7 +38,6 @@ const Schedule = props => {
                 changeSchedule(id);
                 await getSchedule(id);
             }
-                
         }
         fetchData();
     }, [schedule]);
@@ -57,18 +56,23 @@ const Schedule = props => {
 
     /** event handlers */
     const onNameTaskChange = (e, task) => { changeTask({ ...task, name: e.target.value }); }
-    const onBlurNameTaskChange = (e, task) => { submitTask(task); }
+    const onNameTaskBlur = task => { submitTask(task); }
+    const onNameTaskKeyPress = e => {
+        if(e.key === "Enter") 
+            e.target.blur();
+    }
 
     const onCompletedTaskChange = (e, task) => {
-        const newTask = { ...task, completed: Number(e.target.checked) };
-        changeTask(newTask);
-        submitTask(newTask);
+        if(task.id){ //prevent duplications
+            const newTask = { ...task, completed: Number(e.target.checked) };
+            changeTask(newTask);
+            submitTask(newTask);
+        }
     }
 
     const onAddTaskClick = order => {
         addTask(order);
         setNewElementOrder(order);
-        console.log('tasks', tasks);
     }
 
 
@@ -89,12 +93,13 @@ const Schedule = props => {
 
     // focus new input after add task effect
     useEffect(() => {
-        if(newElementOrder >= 0) {
+        if(newElementOrder >= 0 && ref.current.children.length) {
             ref.current.children[newElementOrder].children[0].focus();
             setNewElementOrder(-1);
         }
     }, [newElementOrder]);
     
+
 
     if(loading) return 'Loading...';
     return (<>
@@ -116,14 +121,15 @@ const Schedule = props => {
             </StyledTaskRowButton>
 
             <div ref={ref}>
-                {tasks.map((task, key) => 
-                    <StyledTaskRow key={key}>
+                {tasks.map(task => 
+                    <StyledTaskRow key={task.order} draggable>
                         <StyledTaskInput
                             type="text"
                             name="name"
                             value={task.name}
+                            onKeyPress={onNameTaskKeyPress}
                             onChange={e => onNameTaskChange(e, task) }
-                            onBlur={e => onBlurNameTaskChange(e, task)}
+                            onBlur={() => onNameTaskBlur(task)}
                             disabled={taskLoading}
                         />
                         
@@ -134,14 +140,14 @@ const Schedule = props => {
                             disabled={taskLoading}
                         />
 
-                        <StyledDeleteButton onClick={() => deleteTask(task.order)}>
+                        <StyledDeleteButton onClick={() => deleteTask(task.id)}>
                             <IoMdCloseCircle />
                         </StyledDeleteButton>
                     </StyledTaskRow>
                 )}
             </div>
 
-            <StyledTaskRowButton onClick={() => onAddTaskClick(schedule.tasks.length)}>
+            <StyledTaskRowButton onClick={() => onAddTaskClick(tasks.length)}>
                 <GoPlus /> Add element
             </StyledTaskRowButton>
             {/* <button onClick={() => { reorderTasks(0, 2) }}>Reorder</button> */}

@@ -27,7 +27,6 @@ const Provider = ({ children }) => {
     //return new array with tasks since position with order + 1
     const incrementOrderSincePosition = pos => {
         const tasksIncremented = new Array();
-        console.log(tasks.slice(pos, tasks.length)); 
         tasks.slice(pos, tasks.length).map(task => { tasksIncremented.push({ ...task, order: task.order + 1 }); });
         return tasksIncremented;
     }
@@ -117,7 +116,6 @@ const Provider = ({ children }) => {
     // change 'name' or 'completed' attributes in the state
     const changeTask = async task => {
         const { order } = task;
-        console.log(tasks, task);
         setTasks([ ...tasks.slice(0, order), task, ...tasks.slice(order + 1, tasks.length)]);
     }
 
@@ -158,7 +156,6 @@ const Provider = ({ children }) => {
     // combine with submitTask()
     const addTask = order => {
         const newTask = { name: '', completed: 0, order, schedule_id: scheduleId };
-        console.log(incrementOrderSincePosition(order));
         if(order === 0) 
             setTasks([ newTask, ...incrementOrderSincePosition(order) ]);
         else if(order === tasks.length) 
