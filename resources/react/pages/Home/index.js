@@ -1,32 +1,28 @@
 import React, { useContext, useEffect, useState } from 'react';
+import { Context as ScheduleContext } from '../../contexts/ScheduleContext';
 
-import { Context } from '../../contexts/Context';
+import Calendar from '../../components/Calendar';
+import { StyledHome } from './style';
 
 import { date2String } from '../../util';
-import Calendar from '../../components/Calendar';
 
-import { StyledHome } from './style';
 
 
 const Home = props => {
-    const { loading, error, schedules, getSchedules } = useContext(Context);
+    const { loading, error, schedules, getSchedules } = useContext(ScheduleContext);
 
     useEffect(() => {
         const fetchData = async () => {
-            if(!schedules.length && !loading && !error){
+            if(!schedules.length && !loading && !error)
                 await getSchedules();
-            }
         }
-
         fetchData();
     }, []);
 
     const [month, setMonth] = useState(new Date());
     const onMonthChange = date => { setMonth(date); }
 
-    const handleDayClick = day => {
-        props.history.push(`/${date2String(day)}`);
-    }
+    const handleDayClick = day => { props.history.push(`/${date2String(day)}`); }
 
     if(loading) return 'Loading...';
     return (

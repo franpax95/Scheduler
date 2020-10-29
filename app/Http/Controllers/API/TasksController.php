@@ -23,7 +23,7 @@ class TasksController extends Controller
             $sch = Schedule::findOrFail($schedule_id);
             $tasks = Task::where('user_id', $user->id)
                 ->where('schedule_id', $schedule_id)
-                ->orderBy('order', 'desc')
+                ->orderBy('order', 'asc')
                 ->get();
             return response()->json(['success' => $tasks], 200);
         }catch(ModelNotFoundException $e){
@@ -45,6 +45,7 @@ class TasksController extends Controller
             return response()->json(['error' => 'The schedule does not exist']);
         }
     }
+
 
     public function store(Request $request) {
         $user = Auth::user();
@@ -68,6 +69,7 @@ class TasksController extends Controller
         return response()->json(['success' => $task], 200);
     }
 
+    
     public function update($id, Request $request) {
         $user = Auth::user();
 

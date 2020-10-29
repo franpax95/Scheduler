@@ -41,7 +41,7 @@ const Provider = ({ children }) => {
     const getSchedulesByDate = async date => {
         //Puede estar mal, ya que schedules puede estar desactualizado
         if(schedules.length){
-            setDateSchedules(schedules.filter(sch => sch.date === date));
+            setSchedulesByDate(schedules.filter(sch => sch.date === date));
         }
         
         else{

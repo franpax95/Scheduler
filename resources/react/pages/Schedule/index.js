@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { Context } from '../../contexts/Context';
+import { Context as ScheduleContext } from '../../contexts/ScheduleContext';
+import { Context as TaskContext } from '../../contexts/TaskContext';
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
 import {
     StyledTaskRowButton,
     StyledTaskInput,
@@ -19,44 +19,45 @@ import { GoPlus } from 'react-icons/go';
 
 
 const Schedule = props => {
-    const { loading, error, schedule, successToast, errorToast,
-        getSchedule, changeTask, addTask, reorderTasks, deleteTask, submitTask, resetToasts
-     } = useContext(Context);
+    const { loading, error, schedule, getSchedule } = useContext(ScheduleContext);
+    const { 
+        loading: taskLoading, error: taskError, tasks, toastSuccess, toastError, scheduleId,
+        getTasks, submitTask, deleteTask, changeSchedule, changeTask, swapTasks, addTask, resetToasts
+    } = useContext(TaskContext);
+
     const ref = useRef();
     const [newElementOrder, setNewElementOrder] = useState(-1);
 
+
+    /** fetch effects */
+    // schedule effect
     useEffect(() => {
         const fetchData = async () => {
-            if((!Object.values(schedule).length || props.match.params.id !== schedule.id) && !loading && !error){
-                await getSchedule(props.match.params.id);
+            const { id } = props.match.params;
+            if((!Object.values(schedule).length || id !== schedule.id) && !loading && !error) {
+                changeSchedule(id);
+                await getSchedule(id);
             }
+                
         }
-
         fetchData();
-    }, []);
+    }, [schedule]);
 
-    const onNameTaskChange = (e, task) => {
-        changeTask({ ...task, name: e.target.value });
-        console.log('onchange', task);
-    }
-
-    const onBlurNameTaskChange = (e, task) => {
-        console.log(task);
-        submitTask(task);
-    }
-
+    //tasks effect
     useEffect(() => {
-        if(errorToast.length){
-            toast.error(errorToast, { style: {
-                borderRadius: '0'
-            }});
-        }else if(successToast.length){
-            toast.success(successToast, { style: {
-                borderRadius: '0'
-            }});
+        const fetchData = async () => {
+            const { id } = props.match.params;
+            if((!tasks.length || id !== scheduleId) && !taskLoading && !taskError)
+                await getTasks();
         }
-        resetToasts();
-    }, [successToast, errorToast]);
+
+        if(Object.values(schedule).length) fetchData();
+    }, [schedule, tasks]);
+
+
+    /** event handlers */
+    const onNameTaskChange = (e, task) => { changeTask({ ...task, name: e.target.value }); }
+    const onBlurNameTaskChange = (e, task) => { submitTask(task); }
 
     const onCompletedTaskChange = (e, task) => {
         const newTask = { ...task, completed: Number(e.target.checked) };
@@ -67,8 +68,26 @@ const Schedule = props => {
     const onAddTaskClick = order => {
         addTask(order);
         setNewElementOrder(order);
+        console.log('tasks', tasks);
     }
 
+
+    /** effects */
+    // toasts effect
+    useEffect(() => {
+        if(toastError.length){
+            toast.error(toastError, { style: {
+                borderRadius: '0'
+            }});
+        }else if(toastSuccess.length){
+            toast.success(toastSuccess, { style: {
+                borderRadius: '0'
+            }});
+        }
+        resetToasts(); //No estoy seguro de si es necesario
+    }, [toastError, toastSuccess]);
+
+    // focus new input after add task effect
     useEffect(() => {
         if(newElementOrder >= 0) {
             ref.current.children[newElementOrder].children[0].focus();
@@ -76,6 +95,8 @@ const Schedule = props => {
         }
     }, [newElementOrder]);
     
+
+    if(loading) return 'Loading...';
     return (<>
         {schedule.id === Number(props.match.params.id) && <StyledSchedule>
             <ToastContainer 
@@ -95,7 +116,7 @@ const Schedule = props => {
             </StyledTaskRowButton>
 
             <div ref={ref}>
-                {schedule.tasks && schedule.tasks.map((task, key) => 
+                {tasks.map((task, key) => 
                     <StyledTaskRow key={key}>
                         <StyledTaskInput
                             type="text"
@@ -103,12 +124,14 @@ const Schedule = props => {
                             value={task.name}
                             onChange={e => onNameTaskChange(e, task) }
                             onBlur={e => onBlurNameTaskChange(e, task)}
+                            disabled={taskLoading}
                         />
                         
                         <CustomCheckbox
                             name="completed"
                             checked={task.completed}
                             onChange={e => onCompletedTaskChange(e, task)}
+                            disabled={taskLoading}
                         />
 
                         <StyledDeleteButton onClick={() => deleteTask(task.order)}>

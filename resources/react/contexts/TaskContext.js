@@ -26,8 +26,9 @@ const Provider = ({ children }) => {
 
     //return new array with tasks since position with order + 1
     const incrementOrderSincePosition = pos => {
-        const tasksIncremented = new Array(schedule.tasks.length);
-        tasks.slice(pos, tasks.length).map(task => { tasksIncremented.push({ ...task, order: task.order + 1 }) });
+        const tasksIncremented = new Array();
+        console.log(tasks.slice(pos, tasks.length)); 
+        tasks.slice(pos, tasks.length).map(task => { tasksIncremented.push({ ...task, order: task.order + 1 }); });
         return tasksIncremented;
     }
 
@@ -54,41 +55,30 @@ const Provider = ({ children }) => {
 
 
     // insert/upload task
-    const submitTask = async (order, schedule_id) => { //pruebo con order, sino paso el task entero
-        const task = tasks[order];
-
+    const submitTask = async task => {
         setLoading(true);
         try {
             // edit task
             if(task.id){
                 await axios.post(`/api/tasks/${task.id}`, task, config());
     
-                //Empezamos probando a actualizar todas las tasks
-                const { data } = await axios.get(`/api/tasks/${scheduleId}`, config());
-                setTasks(data.success);
-                //Sino, actualizar directamente el estado
-                // setTasks([ ...schedule.tasks.slice(0, order), task, ...schedule.tasks.slice(order + 1, tasks.length)]);
-                //También es útil por temas de performance, supongo. Es una petición menos
-
+                const { data: { success: tasks } } = await axios.get(`/api/tasks/${scheduleId}`, config());
+                setTasks(tasks);
                 setToastSuccess('Task upload successfully');
             }
             
             // add task
             else {
-                const { data: { success: task } } = await axios.post(`/api/tasks`, { ...task, schedule_id: scheduleId }, config());
+                await axios.post(`/api/tasks`, { ...task, schedule_id: scheduleId }, config());
 
-                //Empezamos probando a actualizar todas las tasks
                 const { data: { success: tasks } } = await axios.get(`/api/tasks/${scheduleId}`, config());
                 setTasks(tasks);
-                //Sino, actualizar directamente el estado
-                // setTasks([ ...schedule.tasks.slice(0, order), task, ...schedule.tasks.slice(order + 1, tasks.length)]);
-                //También es útil por temas de performance, supongo. Es una petición menos
-
                 setToastSuccess('Task created successfully');
             }
         }catch(error) {
-            setError(error),
+            setError(error);
             setToastError('An error occurred updating the task. Try again later...');
+            setTasks([]);
             console.error('Error object', error);
         }finally {
             setLoading(false);
@@ -97,7 +87,7 @@ const Provider = ({ children }) => {
 
 
     // delete task in database
-    const deleteTask = async (task_id, schedule_id) => {
+    const deleteTask = async (task_id) => {
         setLoading(true);
         try {
             await axios.delete(`/api/tasks/${task_id}`, config());
@@ -127,12 +117,13 @@ const Provider = ({ children }) => {
     // change 'name' or 'completed' attributes in the state
     const changeTask = async task => {
         const { order } = task;
-        setTasks([ ...schedule.tasks.slice(0, order), task, ...schedule.tasks.slice(order + 1, tasks.length)]);
+        console.log(tasks, task);
+        setTasks([ ...tasks.slice(0, order), task, ...tasks.slice(order + 1, tasks.length)]);
     }
 
 
     // swap 2 task order
-    const swapTasks = (order1, order2) => {
+    const swapTasks = async (order1, order2) => {
         setLoading(true);
         try {
             // TODO Quizás es más correcto preparar una única petición. Sería 1 petición en lugar de 2 y me aseguro que no quedan orders repetidos
@@ -167,18 +158,19 @@ const Provider = ({ children }) => {
     // combine with submitTask()
     const addTask = order => {
         const newTask = { name: '', completed: 0, order, schedule_id: scheduleId };
+        console.log(incrementOrderSincePosition(order));
         if(order === 0) 
-            setTasks([ newTask, ...incrementOrderSincePosition() ]);
+            setTasks([ newTask, ...incrementOrderSincePosition(order) ]);
         else if(order === tasks.length) 
             setTasks([ ...tasks, newTask ]);
     }
 
     
-    //reset toasts, creo que no es necesario
-    // const resetToasts = () => {
-    //     if(successToast.length) setSuccessToast('');
-    //     if(errorToast.length)   setErrorToast('');
-    // }
+    //reset toasts
+    const resetToasts = () => {
+        if(toastSuccess.length) setToastSuccess('');
+        if(toastError.length)   setToastError('');
+    }
 
 
 
@@ -186,8 +178,8 @@ const Provider = ({ children }) => {
      * exports value & provider
      */
     const value = {
-        loading, error, tasks, toastSuccess, toastError,
-        getTasks, submitTask, deleteTask, changeSchedule, changeTask, swapTasks, addTask
+        loading, error, tasks, toastSuccess, toastError, scheduleId,
+        getTasks, submitTask, deleteTask, changeSchedule, changeTask, swapTasks, addTask, resetToasts
     };
 
     return <Context.Provider value={value}>{children}</Context.Provider>;
