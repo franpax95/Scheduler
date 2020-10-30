@@ -21,6 +21,15 @@ const Provider = ({ children }) => {
     const token = () => sessionStorage.getItem('token');
     const config = () => ({ headers: { Authorization: `Bearer ${token()}` } });
 
+    const addAndSortSchedules = sch => schedulesByDate
+        .slice(0) //copy array
+        .concat(sch) //push alternative
+        .sort((a, b) => { //reorder
+            if(a.name < b.name) return - 1;
+            else if(a.name > b.name) return 1;
+            else return 0;
+        });
+
 
 
     /**
@@ -39,9 +48,12 @@ const Provider = ({ children }) => {
 
 
     const getSchedulesByDate = async date => {
-        //Puede estar mal, ya que schedules puede estar desactualizado
         if(schedules.length){
-            setSchedulesByDate(schedules.filter(sch => sch.date === date));
+            setSchedulesByDate(schedules.filter(sch => sch.date === date).sort((a, b) => {
+                if(a.name < b.name) return - 1;
+                else if(a.name > b.name) return 1;
+                else return 0;
+            }));
         }
         
         else{
@@ -75,16 +87,22 @@ const Provider = ({ children }) => {
 
     const addSchedule = async schedule => {
         setLoading(true);
+        let ok = true;
+
         try {
-            await axios.post(`/api/schedules`, schedule, config());
+            const { data } = await axios.post(`/api/schedules`, schedule, config());
             setSchedules([]);
-            setSchedulesByDate([]);
+            console.log(data);
+            setSchedulesByDate(addAndSortSchedules(data.success));
         }catch(error) {
             setError(error);
+            ok = false;
             console.error('Error schedule', error);
         }finally {
             setLoading(false);
         }
+
+        return true;
     }
 
 
