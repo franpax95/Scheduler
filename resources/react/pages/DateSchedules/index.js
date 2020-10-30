@@ -1,25 +1,32 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Context as ScheduleContext } from '../../contexts/ScheduleContext';
 
-import { StyledDateSchedules, StyledSchedule, StyledScheduleDate } from './style';
+import { StyledDateSchedules, StyledScheduleLink, StyledScheduleDate } from './style';
+import DateSchedulesAddButton from '../../components/DateSchedulesAddButton';
 
 
 
 const DateSchedules = props => {
     const { date } = props.match.params;
     const formattedDate = new Date(date).toDateString();
-    const { loading, error, schedulesByDate, getSchedulesByDate } = useContext(ScheduleContext);
+    const { loading, error, schedulesByDate, getSchedulesByDate, addSchedule } = useContext(ScheduleContext);
     
+    const [formDataName, setFormDataName] = useState('');
+
+
     useEffect(() => {
         const fetchData = async () => {
-            
-            console.log(date);
             if((!schedulesByDate.length || date !== schedulesByDate[0].date) && !loading && !error)
-                await getSchedulesByDate(date);
+                getSchedulesByDate(date);
         }
         fetchData();
-    }, []);
-    
+    }, [date]);
+
+    const submitForm = e => {
+        e.preventDefault();
+        if(addSchedule({ name: formDataName, date }));
+            setFormDataName(''); //reset
+    }
     
     if(loading) return 'Loading...';
     return (
@@ -29,10 +36,17 @@ const DateSchedules = props => {
             </StyledScheduleDate>
 
             {schedulesByDate.map(sch => (
-                <StyledSchedule key={sch.id} to={`/schedule/${sch.id}`}>
+                <StyledScheduleLink key={sch.id} to={`/schedule/${sch.id}`}>
                     {sch.name}
-                </StyledSchedule>
+                </StyledScheduleLink>
             ))}
+
+            <DateSchedulesAddButton
+                value={formDataName}
+                onChange={e => { setFormDataName(e.target.value) }}
+                onSubmit={submitForm}
+                transitionDuration={400}
+            />
         </StyledDateSchedules>
     );
 }

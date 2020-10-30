@@ -10,7 +10,7 @@ export const StyledDateSchedules = styled.section`
     align-items: center;
 `;
 
-export const StyledSchedule = styled(Link)`
+export const StyledScheduleLink = styled(Link)`
     width: max(70vw, 300px);
     max-width: 900px;
     height: 80px;

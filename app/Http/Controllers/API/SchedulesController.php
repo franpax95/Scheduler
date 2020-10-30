@@ -4,9 +4,14 @@ namespace App\Http\Controllers\API;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+
 use App\Http\Controllers\Controller;
+
 use App\Models\Task;
 use App\Models\Schedule;
+
 
 class SchedulesController extends Controller
 {
@@ -26,7 +31,7 @@ class SchedulesController extends Controller
         $user = Auth::user();
         $schedules = Schedule::where('user_id', $user->id)
             ->where('date', $date)
-            ->orderBy('name', 'desc')
+            ->orderBy('name', 'asc')
             ->get();
 
         return response()->json(['success' => $schedules], 200);
@@ -51,5 +56,23 @@ class SchedulesController extends Controller
         }catch(ModelNotFoundException $e){
             return response()->json(['error' => 'The schedule does not exist']);
         }
+    }
+
+    /**
+     * store a new schedule
+     */
+    public function store(Request $request) {
+        $user = Auth::user();
+
+        $id = DB::table('schedules')->insertGetId([
+            'name' => $request->name,
+            'date' => $request->date,
+            'user_id' => $user->id,
+            'created_at' => Carbon::now()
+        ]);
+
+        $schedule = Schedule::find($id);
+
+        return response()->json(['success' => $schedule], 200);
     }
 }

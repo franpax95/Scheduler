@@ -24,6 +24,7 @@ Route::middleware('auth:api')->group(function() {
     Route::get('schedules', 'App\Http\Controllers\API\SchedulesController@get');
     Route::get('schedules/date/{date}', 'App\Http\Controllers\API\SchedulesController@getByDate');
     Route::get('schedules/{id}', 'App\Http\Controllers\API\SchedulesController@find');
+    Route::post('schedules', 'App\Http\Controllers\API\SchedulesController@store');
 
     Route::get('tasks/{id}', 'App\Http\Controllers\API\TasksController@get');
     Route::post('tasks', 'App\Http\Controllers\API\TasksController@store');
