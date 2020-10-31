@@ -21,6 +21,8 @@ class UserController extends Controller
 
         if(auth()->attempt($credentials)){
             $user = Auth::user();
+            // $user->token = $user->createToken('Scheduler')->accessToken;
+            // return response()->json(['success' => $user], 200);
             $success['user'] = $user;
             $success['token'] = $user->createToken('Scheduler')->accessToken;
             return response()->json(['success' => $success], 200);

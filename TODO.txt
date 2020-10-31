@@ -1,0 +1,10 @@
+Cosas por hacer:
+
+    ·Hacer un login persistente.
+        https://www.freecodecamp.org/news/how-to-persist-a-logged-in-user-in-react/
+
+    ·Hacer un cambio de theme: uno profesional y otro más infantil.
+        https://www.smashingmagazine.com/2020/04/dark-mode-react-apps-styled-components/
+        https://blog.ezrabowman.com/build-a-theme-switcher-in-react-using-styled-components-and-redux/
+
+    ·Estilos en general

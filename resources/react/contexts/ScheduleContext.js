@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import axios from 'axios';
+import { Context as UserContext } from './UserContext';
 
 const Context = React.createContext([{}, () => {}]);
 
@@ -18,7 +19,7 @@ const Provider = ({ children }) => {
     /**
      * private methods
      */
-    const token = () => sessionStorage.getItem('token');
+    const { token } = useContext(UserContext);
     const config = () => ({ headers: { Authorization: `Bearer ${token()}` } });
 
     const addAndSortSchedules = sch => schedulesByDate
