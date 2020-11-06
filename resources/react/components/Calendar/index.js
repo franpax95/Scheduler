@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { Context as ThemeContext } from '../../contexts/ThemeContext';
 import DayPicker from 'react-day-picker';
 import 'react-day-picker/lib/style.css';
 import './styles.css';
@@ -83,16 +84,38 @@ const renderDay = (date, schedules, month) => {
 /**
  * main
  */
+const LightTheme = React.lazy(() => import('./themes/light'));
+const DarkTheme = React.lazy(() => import('./themes/dark'));
+
+const ThemeSelector = ({ theme = 'light', children }) => {
+    console.log(theme);
+    return(
+        <>
+            <React.Suspense fallback={<></>}>
+                {theme === 'light' && <LightTheme />}
+                {theme === 'dark' && <DarkTheme />}
+            </React.Suspense>
+            {children}
+        </>
+    )
+};
+
 const Calendar = ({ schedules, month, onMonthChange, handleDayClick }) => {
-    return <DayPicker
-        month={month}
-        onMonthChange={onMonthChange}
-        renderDay={(date) => renderDay(date, schedules,month)}
-        onDayClick={handleDayClick}
-        todayButton="Go To Today"
-        navbarElement={<CalendarNavbar />}
-        weekdayElement={<Weekday />}
-    />;
+    const { getTheme } = useContext(ThemeContext);
+
+    return (
+        <ThemeSelector theme={getTheme()}>
+            <DayPicker
+                month={month}
+                onMonthChange={onMonthChange}
+                renderDay={(date) => renderDay(date, schedules,month)}
+                onDayClick={handleDayClick}
+                todayButton="Go To Today"
+                navbarElement={<CalendarNavbar />}
+                weekdayElement={<Weekday />}
+            />
+        </ThemeSelector>
+    );
 }
 
 export default Calendar;

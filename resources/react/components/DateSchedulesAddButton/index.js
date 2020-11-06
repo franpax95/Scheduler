@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { useTransition } from 'react-spring';
-import { Background, AbsoluteWrapper, FormWrapper, Input, OpenButton, Submit, CloseButton } from './style';
+import { ScheduleInput } from '../Input'
+import { AbsoluteWrapper, FormWrapper, Input, OpenButton, Submit, CloseButton } from './style';
 
 const DateSchedulesAddButton = ({ name = 'name', value, onChange, onSubmit, duration = 100 }) => {
-    const [toggle, setToggle] = useState(false);
+    const [toggle, setToggle] = useState(true);
 
     const transitions = useTransition(toggle, null, {
         from: { opacity: 0 },
@@ -22,7 +23,7 @@ const DateSchedulesAddButton = ({ name = 'name', value, onChange, onSubmit, dura
             {transitions.map(({ item, key, props }) => 
                 item
                     ? <FormWrapper onSubmit={onSubmitEffect} style={props} key={key}>
-                        <Input type="text" name={name} onChange={onChange} value={value} />
+                        <ScheduleInput type="text" name={name} onChange={onChange} value={value} />
                         <Submit type="submit" value="Save" />
                         <CloseButton type="button" onClick={() => setToggle(!toggle)}>X</CloseButton>
                     </FormWrapper>
@@ -31,7 +32,7 @@ const DateSchedulesAddButton = ({ name = 'name', value, onChange, onSubmit, dura
                     </OpenButton>
             )}
         </AbsoluteWrapper>
-    )
+    );
 }
 
 export default DateSchedulesAddButton;

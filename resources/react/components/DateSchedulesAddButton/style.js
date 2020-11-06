@@ -1,25 +1,15 @@
 import styled from 'styled-components';
+import theme from 'styled-theming';
 import { animated } from 'react-spring';
 
-export const Background = styled.div`
-    width: max(70vw, 300px);
-    max-width: 900px;
-    height: 80px;
-    margin-bottom: max(5vh, 30px);
 
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    overflow: hidden;
-    border-radius: 10px;
-    background-color: #808080;
-`;
+const absoluteWrapperBackgroundColor = theme('mode', { light: 'cornflowerblue', dark: '#808080' })
 
 export const AbsoluteWrapper = styled.div`
     width: max(70vw, 300px);
     max-width: 900px;
     height: 80px;
+    margin-top: 5vh;
     margin-bottom: max(5vh, 30px);
 
     position: relative;
@@ -29,10 +19,13 @@ export const AbsoluteWrapper = styled.div`
 
     overflow: hidden;
     border-radius: 10px;
-    background-color: #808080;
+    background-color: ${absoluteWrapperBackgroundColor};
     
     /* transition: opacity ${props => props.transitionDuration}ms; */
 `;
+
+const openButtonBackgroundHover = theme('mode', { light: '#8db0f2', dark: '#999999' });
+const openButtonBackgroundActive = theme('mode', { light: '#3271e7', dark: '#b3b3b3' });
 
 export const OpenButton = styled(animated.button)`
     width: 100%;
@@ -49,7 +42,7 @@ export const OpenButton = styled(animated.button)`
     background-color: transparent;
     color: white;
 
-    /*font-size: max(2vw, 20px);*/
+    font-size: min(max(2vw, 18px), 30px);
     font-size: 20px;
     font-weight: bold;
     font-style: italic;
@@ -57,11 +50,11 @@ export const OpenButton = styled(animated.button)`
     transition: background-color .5s, color .5s;
 
     &:hover {
-        background-color: #999999;
+        background-color: ${openButtonBackgroundHover};
     }
 
     &:active {
-        background-color: #b3b3b3;
+        background-color: ${openButtonBackgroundActive};
     }
 `;
 

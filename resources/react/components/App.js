@@ -1,9 +1,10 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 import { Route, Switch, useLocation, Redirect } from 'react-router-dom';
-import { useTransition, animated, config } from 'react-spring';
-import styled from 'styled-components';
+import { useTransition, config } from 'react-spring';
 
 import { Context as UserContext } from '../contexts/UserContext';
+
+import { AnimatedWrapper, StyledApp } from './AppStyle';
 
 import Navbar from '../components/Navbar';
 
@@ -13,13 +14,6 @@ import DateSchedules from '../pages/DateSchedules';
 import Schedule from '../pages/Schedule';
 import NotFound from '../pages/NotFound';
 
-/** styled-components */
-const SpringWrapper = styled.div`
-    width: 100%;
-    height: calc(100% - 80px);
-    position: absolute;
-`;
-const AnimatedSpringWrapper = animated(SpringWrapper);
 
 /** renderprops AuthRoute */
 const AuthRoute = ({ path, component, isAuth = false }) => 
@@ -53,11 +47,13 @@ const App = props => {
     });
 
     return (<>
-        {isAuth && <Navbar />}
+        
         
         {transitions.map(({ item: location, props, key }) => (
-            <AnimatedSpringWrapper key={key} style={props}>
-                <div className="App">
+            <AnimatedWrapper key={key} style={props}>
+                <StyledApp>
+                    {isAuth && <Navbar />}
+
                     <Switch location={location}>
                         <Route exact path="/login" component={Login} />
 
@@ -67,8 +63,8 @@ const App = props => {
         
                         <AuthRoute component={NotFound} isAuth={isAuth} />
                     </Switch>
-                </div>
-            </AnimatedSpringWrapper>
+                </StyledApp>
+            </AnimatedWrapper>
         ))}
     </>);
 }

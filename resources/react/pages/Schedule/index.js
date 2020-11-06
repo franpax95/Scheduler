@@ -12,6 +12,7 @@ import {
     StyledTaskRow,
     StyledDeleteButton
 } from './style';
+import Title from '../../components/Title';
 import { CustomCheckbox } from '../../components/CustomCheckbox';
 import { IoMdCloseCircle } from 'react-icons/io';
 import { GoPlus } from 'react-icons/go';
@@ -114,7 +115,7 @@ const Schedule = props => {
                 progress={undefined}
             />
 
-            <StyledTitle>{schedule.name}</StyledTitle>
+            <Title>{schedule.name}</Title>
 
             <StyledTaskRowButton onClick={() => onAddTaskClick(0)}>
                 <GoPlus /> Add element

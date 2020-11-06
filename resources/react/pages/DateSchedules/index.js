@@ -1,8 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Context as ScheduleContext } from '../../contexts/ScheduleContext';
 
-import { StyledDateSchedules, StyledScheduleLink, StyledScheduleDate } from './style';
+import { StyledDateSchedules, ScheduleLink, DeleteScheduleButton } from './style';
+import Title from '../../components/Title';
 import DateSchedulesAddButton from '../../components/DateSchedulesAddButton';
+
+import { MdClose } from 'react-icons/md';
 
 
 
@@ -12,6 +15,7 @@ const DateSchedules = props => {
     const { loading, error, schedulesByDate, getSchedulesByDate, addSchedule } = useContext(ScheduleContext);
     
     const [formDataName, setFormDataName] = useState('');
+
 
 
     useEffect(() => {
@@ -27,18 +31,22 @@ const DateSchedules = props => {
         if(addSchedule({ name: formDataName, date }));
             setFormDataName(''); //reset
     }
+
+
     
     if(loading) return 'Loading...';
     return (
         <StyledDateSchedules>
-            <StyledScheduleDate>
-                {formattedDate}
-            </StyledScheduleDate>
+            <Title>{formattedDate}</Title>
 
             {schedulesByDate.map(sch => (
-                <StyledScheduleLink key={sch.id} to={`/schedule/${sch.id}`}>
+                <ScheduleLink key={sch.id} to={`/schedule/${sch.id}`}>
                     {sch.name}
-                </StyledScheduleLink>
+
+                    <DeleteScheduleButton onClick={e => e.preventDefault()}>
+                        <MdClose />
+                    </DeleteScheduleButton>
+                </ScheduleLink>
             ))}
 
             <DateSchedulesAddButton

@@ -41,9 +41,10 @@ const Provider = ({ children }) => {
         try{
             const { data } = await axios.get('/api/schedules', config());
             setSchedules(data.success);
-            setLoading(false);
         }catch(error){
             setError(error);
+        }finally {
+            setLoading(false);
         }
     }
 
