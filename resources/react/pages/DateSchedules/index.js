@@ -1,11 +1,10 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Context as ScheduleContext } from '../../contexts/ScheduleContext';
 
-import { StyledDateSchedules, ScheduleLink, DeleteScheduleButton } from './style';
+import { StyledDateSchedules, ScheduleLink } from './style';
 import Title from '../../components/Title';
 import DateSchedulesAddButton from '../../components/DateSchedulesAddButton';
-
-import { MdClose } from 'react-icons/md';
+import { QuitButton } from '../../components/Button';
 
 
 
@@ -43,9 +42,13 @@ const DateSchedules = props => {
                 <ScheduleLink key={sch.id} to={`/schedule/${sch.id}`}>
                     {sch.name}
 
-                    <DeleteScheduleButton onClick={e => e.preventDefault()}>
-                        <MdClose />
-                    </DeleteScheduleButton>
+                    <QuitButton 
+                        onClick={e => e.preventDefault()} 
+                        style={{
+                            position: 'absolute',
+                            right: '20px'
+                        }}
+                    />
                 </ScheduleLink>
             ))}
 
@@ -53,7 +56,7 @@ const DateSchedules = props => {
                 value={formDataName}
                 onChange={e => { setFormDataName(e.target.value) }}
                 onSubmit={submitForm}
-                transitionDuration={400}
+                duration={200}
             />
         </StyledDateSchedules>
     );

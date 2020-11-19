@@ -3,7 +3,7 @@ import theme from 'styled-theming';
 import { animated } from 'react-spring';
 
 
-const absoluteWrapperBackgroundColor = theme('mode', { light: 'cornflowerblue', dark: '#808080' })
+const absoluteWrapperBackgroundColor = theme('mode', { light: 'cornflowerblue', dark: '#428551' });
 
 export const AbsoluteWrapper = styled.div`
     width: max(70vw, 300px);
@@ -24,8 +24,8 @@ export const AbsoluteWrapper = styled.div`
     /* transition: opacity ${props => props.transitionDuration}ms; */
 `;
 
-const openButtonBackgroundHover = theme('mode', { light: '#8db0f2', dark: '#999999' });
-const openButtonBackgroundActive = theme('mode', { light: '#3271e7', dark: '#b3b3b3' });
+const openButtonBackgroundHover = theme('mode', { light: '#8db0f2', dark: '#4c9a5d' });
+const openButtonBackgroundActive = theme('mode', { light: '#3271e7', dark: '#32673e' });
 
 export const OpenButton = styled(animated.button)`
     width: 100%;
@@ -71,10 +71,10 @@ export const FormWrapper = styled(animated.form)`
     flex-direction: row;
     justify-content: center;
     align-items: center;
-`;
 
-export const Input = styled.input`
-    width: 200px;
+    & > * {
+        margin: 0 5px;
+    }
 `;
 
 export const Submit = styled.input`

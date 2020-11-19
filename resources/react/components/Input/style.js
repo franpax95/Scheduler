@@ -7,6 +7,8 @@ const boxShadowScheduleInputFocus = theme('mode', { light: '0px 0px 15px 0px rgb
 
 export const StyledScheduleInput = styled.input`
     padding: 4px 2px;
+    width: 50%;
+    min-width: 100px;
 
     border: solid 1px gray;
     border-radius: 4px;

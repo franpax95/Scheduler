@@ -62,36 +62,3 @@ export const ScheduleLink = styled(Link)`
 
     transition: background-color .2s;
 `;
-
-
-
-export const DeleteScheduleButton = styled.button`
-    z-index: 500;
-    width: min(max(5vw, 20px), 30px);
-    height: min(max(5vw, 20px), 30px);
-    margin: auto 0;
-
-    position: absolute;
-    right: 20px;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    border-radius: 50%;
-    background-color: rgba(255, 36, 0, 1);
-    color: white;
-
-    font-size: min(max(2vw, 16px), 22px);
-    font-weight: bold;
-
-    transition: background-color .2s;
-
-    &:hover{
-        background-color: #e60800;
-    }
-
-    &:active{
-        background-color: rgba(194, 24, 7, 1);
-    }
-`;

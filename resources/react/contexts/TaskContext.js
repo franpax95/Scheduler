@@ -32,6 +32,16 @@ const Provider = ({ children }) => {
         return tasksIncremented;
     }
 
+    const reorderTasks = (startIndex, endIndex) => {
+        const newTasks = Array.from(tasks);
+        const [removed] = newTasks.splice(startIndex, 1);
+        newTasks.splice(endIndex, 0, removed);
+        newTasks[startIndex] = { ...newTasks[startIndex], order: startIndex };
+        newTasks[endIndex] = { ...newTasks[endIndex], order: endIndex };
+
+        return newTasks;
+    }
+
 
 
     /**
@@ -122,29 +132,19 @@ const Provider = ({ children }) => {
 
 
     // swap 2 task order
-    const swapTasks = async (order1, order2) => {
+    const swapTasks = async (startIndex, endIndex) => {
+        const oldTasks = Array.from(tasks);
+        
         setLoading(true);
         try {
-            // TODO Quizás es más correcto preparar una única petición. Sería 1 petición en lugar de 2 y me aseguro que no quedan orders repetidos
-            await axios.post(`/api/tasks/${tasks[order1].id}`, { ...tasks[order1], order: order2 }, config());
-            await axios.post(`/api/tasks/${tasks[order2].id}`, { ...tasks[order2], order: order1 }, config());
-    
-            //Empezamos probando a actualizar todas las tasks
-            const { data } = await axios.get(`/api/tasks/${scheduleId}`, config());
-            setTasks(data.success);
-            //Sino, actualizar directamente el estado
-            // setTasks([
-            //     ...tasks.slice(0, order1),
-            //     { ... tasks[order2], order: order2 },
-            //     ...tasks.slice(order1 + 1, order2),
-            //     { ...tasks[order1], order: order1 },
-            //     ...tasks.slice(order2 + 1, tasks.length)
-            // ]);
-            //También es útil por temas de performance, supongo. Es una petición menos
+            setTasks(reorderTasks(startIndex, endIndex));
+
+            await axios.post(`/api/tasks/reorder/${scheduleId}`, { startIndex, endIndex }, config());
 
             setToastSuccess('Tasks reorder successfully');
         }catch(error) {
-            setError(error),
+            setError(error);
+            setTasks(oldTasks);
             setToastError('An error occurred reording the tasks. Try again later...');
             console.error('Error object', error);
         }finally {

@@ -14,7 +14,7 @@ const Navbar = () => {
     return (
         <StyledNavbar>
             <MainLink to="/">
-                TODO List App
+                Scheduler
             </MainLink>
 
             <RightSection>
