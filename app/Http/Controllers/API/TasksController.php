@@ -88,6 +88,32 @@ class TasksController extends Controller
         return response()->json(['success' => $task], 200);
     }
 
+    
+    /**
+     * update two tasks order
+     */
+    public function reorder($schedule_id, Request $request) {
+        $startTask = Task::where([
+            ['schedule_id', '=', $schedule_id],
+            ['order', '=', $request->startIndex]
+        ])->first();
+
+        $endTask = Task::where([
+            ['schedule_id', '=', $schedule_id],
+            ['order', '=', $request->endIndex]
+        ])->first();
+
+
+        $startTask->order = $request->endIndex;
+        $endTask->order = $request->startIndex;
+
+        $startTask->save();
+        $endTask->save();
+
+
+        return response()->json(['success' => null]);
+    }
+
     /**
      * delete a task
      */

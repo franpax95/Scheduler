@@ -1,33 +1,37 @@
-import React, { useContext, useState } from 'react';
-import { FaUserAlt,FaPowerOff } from 'react-icons/fa';
+import React, { useContext } from 'react';
+import { FaUserAlt, FaPowerOff, FaPaintBrush } from 'react-icons/fa';
 
+import { Context as ThemeContext } from '../../contexts/ThemeContext';
 import { Context as UserContext } from '../../contexts/UserContext';
 
-import { 
-    Navbar as StyledNavbar, RightSection,
-    MainLink, DangerLink, StyledLink
-} from './style';
+import { StyledNavbar, RightSection, MainLink, ThemeButton, ProfileLink, LogoutLink } from './style';
 
 
 const Navbar = () => {
     const { isAuth, user, logout } = useContext(UserContext);
+    const { toggle, getTheme } = useContext(ThemeContext);
     
     return (
         <StyledNavbar>
             <MainLink to="/">
-                TODO List App
+                Scheduler
             </MainLink>
 
             <RightSection>
-                <StyledLink to="/profile">
+                <ThemeButton onClick={() => toggle()}>
+                    <FaPaintBrush />
+                    {getTheme() === 'light' ? 'Dark' : 'Light'} theme
+                </ThemeButton>
+
+                <ProfileLink to="/profile">
                     <FaUserAlt />
                     Profile
-                </StyledLink>
+                </ProfileLink>
                 
-                <DangerLink to="/logout" onClick={() => logout()}>
+                <LogoutLink to="/logout" onClick={() => logout()}>
                     <FaPowerOff />
                     Logout
-                </DangerLink>
+                </LogoutLink>
             </RightSection>
         </StyledNavbar>
     );

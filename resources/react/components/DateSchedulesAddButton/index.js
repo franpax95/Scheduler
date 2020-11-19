@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { useTransition } from 'react-spring';
-import { Background, AbsoluteWrapper, FormWrapper, Input, OpenButton, Submit, CloseButton } from './style';
+import { ScheduleInput } from '../Input';
+import { ScheduleSubmitButton, QuitButton } from '../Button';
+import { AbsoluteWrapper, FormWrapper, OpenButton } from './style';
 
-const DateSchedulesAddButton = ({ name = 'name', value, onChange, onSubmit, duration = 100 }) => {
+const DateSchedulesAddButton = ({ name = 'name', value, onChange, onSubmit, duration = 200 }) => {
     const [toggle, setToggle] = useState(false);
 
     const transitions = useTransition(toggle, null, {
@@ -14,7 +16,7 @@ const DateSchedulesAddButton = ({ name = 'name', value, onChange, onSubmit, dura
 
     const onSubmitEffect = e => {
         onSubmit(e);
-        setToggle(!toggle)
+        setToggle(!toggle);
     }
 
     return(
@@ -22,16 +24,16 @@ const DateSchedulesAddButton = ({ name = 'name', value, onChange, onSubmit, dura
             {transitions.map(({ item, key, props }) => 
                 item
                     ? <FormWrapper onSubmit={onSubmitEffect} style={props} key={key}>
-                        <Input type="text" name={name} onChange={onChange} value={value} />
-                        <Submit type="submit" value="Save" />
-                        <CloseButton type="button" onClick={() => setToggle(!toggle)}>X</CloseButton>
+                        <ScheduleInput type="text" name={name} onChange={onChange} value={value} />
+                        <ScheduleSubmitButton type="submit" value="Save" />
+                        <QuitButton onClick={() => setToggle(!toggle)} />
                     </FormWrapper>
                     : <OpenButton onClick={() => setToggle(!toggle)} style={props} key={key}>
                         + Add schedule
                     </OpenButton>
             )}
         </AbsoluteWrapper>
-    )
+    );
 }
 
 export default DateSchedulesAddButton;

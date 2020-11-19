@@ -1,4 +1,7 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
+import theme from 'styled-theming';
+
+
 
 export const StyledSchedule = styled.div`
     padding: 8vh 0;
@@ -9,15 +12,23 @@ export const StyledSchedule = styled.div`
     justify-content: space-evenly;
 `;
 
-export const StyledTitle = styled.h1`
-    margin: 10vh 0 4vh 0;
 
-    color: white;
 
-    font-size: max(3vw, 30px);
-    font-weight: bold;
-    text-shadow: 2px 2px 2px rgba(150, 150, 150, 1);
-`;
+const taskRowBackgroundColor = theme('mode', {
+    light: css`
+        &:nth-child(8n + 0) { background-color: #2D86F8; };
+        &:nth-child(8n + 1) { background-color: #27A4D9; };
+        &:nth-child(8n + 2) { background-color: #38EBF0; };
+        &:nth-child(8n + 3) { background-color: #27D9AD; };
+        &:nth-child(8n + 4) { background-color: #2DF88C; };
+        &:nth-child(8n + 5) { background-color: #27D9AD; };
+        &:nth-child(8n + 6) { background-color: #38EBF0; };
+        &:nth-child(8n + 7) { background-color: #27A4D9; };
+    `,
+    dark: css`
+        background-color: #F78536;
+    `,
+});
 
 export const StyledTaskRow = styled.div`
     margin: 10px 0;
@@ -32,12 +43,18 @@ export const StyledTaskRow = styled.div`
     align-items: center;
 
     border-radius: 5px;
-    background-color: darkgray;
+    ${taskRowBackgroundColor};
 `;
+
+
+
+const taskRowButtonBackgroundColor = theme('mode', { light: '#69D17F', dark: '#428551' });
+const taskRowButtonBackgroundColor_Hover = theme('mode', { light: '#4fc96a', dark: '#4c9a5d' });
+const taskRowButtonBackgroundColor_Active = theme('mode', { light: '#36b050', dark: '#65b376' });
 
 export const StyledTaskRowButton = styled.button`
     margin: 10px 0;
-    padding: 15px 20px;
+    height: 60px;
     width: 70vw;
     max-width: 600px;
     min-width: 250px;
@@ -49,23 +66,25 @@ export const StyledTaskRowButton = styled.button`
 
     cursor: pointer;
     border-radius: 5px;
-    background-color: lightgray;
+    background-color: ${taskRowButtonBackgroundColor};
     -webkit-box-shadow: 5px 5px 10px -10px rgba(0,0,0,0.75);
     -moz-box-shadow: 5px 5px 10px -10px rgba(0,0,0,0.75);
     box-shadow: 5px 5px 10px -10px rgba(0,0,0,0.75);
 
     font-size: min(18px, max(13px, 1.8vw));
 
-    transition: background-color .1s, color .1s;
+    transition: background-color .2s, color .2s;
 
     &:hover{
-        background-color: darkgray;
+        background-color: ${taskRowButtonBackgroundColor_Hover};
     }
 
     &:active{
-        background-color: gray;
+        background-color: ${taskRowButtonBackgroundColor_Active};
     }
 `;
+
+
 
 export const StyledTaskInput = styled.input`
     margin-right: auto;
@@ -75,7 +94,7 @@ export const StyledTaskInput = styled.input`
 
     cursor: default;
     border: none;
-    border-bottom: solid 1.5px darkgray;
+    border-bottom: solid 1.5px transparent;
     background-color: inherit;
 
     font-size: min(20px, max(14px, 2.2vw));
@@ -88,27 +107,7 @@ export const StyledTaskInput = styled.input`
     
     &:focus {
         cursor: auto;
-        background-color: lightgray;
+        background-color: rgba(255, 255, 255, .1);
         border-bottom: solid 1.5px gray;
-    }
-`;
-
-export const StyledDeleteButton = styled.button`
-    background: none;
-    border: none; 
-
-    & *{
-        margin-top: 2px;
-        color: red;
-        font-size: 25px;
-        transition: color .2s;
-    }
-
-    &:hover *{
-        color: #cc0000;
-    }
-
-    &:active * {
-        color: #800000;
     }
 `;
