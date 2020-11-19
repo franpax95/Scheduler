@@ -93,25 +93,44 @@ class TasksController extends Controller
      * update two tasks order
      */
     public function reorder($schedule_id, Request $request) {
-        $startTask = Task::where([
-            ['schedule_id', '=', $schedule_id],
-            ['order', '=', $request->startIndex]
-        ])->first();
+        if($request->newOrder != $request->currentOrder) {
+            $task = Task::where([
+                'schedule_id', '=', $schedule_id,
+                'order', '=', $request->currentOrder
+            ]);
+    
+            // $request tendrá currentOrder que es el orden antiguo y newOrder que es la nueva posición
+            if($request->newOrder < $request->currentOrder) {
+                DB::raw('UPDATE tasks SET tasks.order = tasks.order + 1 WHERE tasks.schedule_id = ' + $schedule_id + ' AND tasks.order >= ' + $request->newOrder + ' AND tasks.order < ' + $request->currentOrder);
+            } else if($request->newOrder > $request->currentOrder) {
+                DB::raw('UPDATE tasks SET tasks.order = tasks.order - 1 WHERE tasks.schedule_id = ' + $schedule_id + ' AND tasks.order >= ' + $request->currentOrder + ' AND tasks.order < ' + $request->newOrder);
+            }
 
-        $endTask = Task::where([
-            ['schedule_id', '=', $schedule_id],
-            ['order', '=', $request->endIndex]
-        ])->first();
-
-
-        $startTask->order = $request->endIndex;
-        $endTask->order = $request->startIndex;
-
-        $startTask->save();
-        $endTask->save();
-
-
-        return response()->json(['success' => null]);
+            $task->order = $request->newOrder;
+            $task->save();
+    
+            // $startTask = Task::where([
+            //     ['schedule_id', '=', $schedule_id],
+            //     ['order', '=', $request->currentOrder]
+            // ])->first();
+    
+            // $endTask = Task::where([
+            //     ['schedule_id', '=', $schedule_id],
+            //     ['order', '=', $request->endIndex]
+            // ])->first();
+    
+    
+            // $startTask->order = $request->endIndex;
+            // $endTask->order = $request->startIndex;
+    
+            // $startTask->save();
+            // $endTask->save();
+    
+    
+            return response()->json(['success' => null]);
+        } else {
+            return response()->json(['success' => null]);
+        }
     }
 
     /**
