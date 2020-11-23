@@ -95,24 +95,25 @@ class TasksController extends Controller
     public function reorder($schedule_id, Request $request) {
         try{
             $task = Task::findOrFail($request->task_id);
-            $order = intval($request->order);
+            $newOrder = intval($request->order);
+            $oldOrder = $task->order;
 
-            if($order != $task->order) {
-                if($order < $task->order) {
+            if($newOrder != $task->order) {
+                if($newOrder < $oldOrder) {
                     DB::table('tasks')
                         ->where('schedule_id', $schedule_id)
-                        ->where('order', '>=', $order)
-                        ->where('order', '<', $task->order)
+                        ->where('order', '>=', $newOrder)
+                        ->where('order', '<', $oldOrder)
                         ->increment('order');
-                } else if($order > $task->order) {
+                } else if($newOrder > $oldOrder) {
                     DB::table('tasks')
                         ->where('schedule_id', $schedule_id)
-                        ->where('order', '>=', $task->order)
-                        ->where('order', '<', $order)
+                        ->where('order', '>', $oldOrder)
+                        ->where('order', '<=', $newOrder)
                         ->decrement('order');
                 }
 
-                $task->order = $order;
+                $task->order = $newOrder;
                 $task->save();
             }
 
