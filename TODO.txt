@@ -1,10 +1,45 @@
-Cosas por hacer:
+Tareas actuales:
+	# Validaciones (tanto front, como back).
+		·Add Schedule
+		·Add Task
+		·Login
+		·Register
 
-    ·Hacer un login persistente.
-        https://www.freecodecamp.org/news/how-to-persist-a-logged-in-user-in-react/
 
-    ·Hacer un cambio de theme: uno profesional y otro más infantil.
-        https://www.smashingmagazine.com/2020/04/dark-mode-react-apps-styled-components/
-        https://blog.ezrabowman.com/build-a-theme-switcher-in-react-using-styled-components-and-redux/
+	# Repasar el código back buscando como manejar correctamente errores y validaciones.
 
-    ·Estilos en general
+	# Informarme sobre middlewares útiles para los controladores.
+
+	# Informarme e implementar códigos de http correctos para devolver con el json (REST API).
+
+	# Implementar en los formularios el despliegue de un mensaje de error
+
+	# Pages
+		·Register
+		·Login
+		·NotFound
+
+	# Components
+		·Sidebar
+
+	# Styles
+		·Register
+		·Login
+		·Calendar
+		·Toast
+
+	# Responsive Design
+		·Implementar Sidebar
+
+
+
+Tareas finales:
+	# Repasar el código front buscando refactorizar, quitar console.log y rendimiento.
+
+	# Repasar estilos, buscando cómo refactorizar con styled-components.
+
+	# Repasar el código back para que todo tenga una coherencia, aparte de refactorizar cuando sea posible.
+
+	# Documentar/comentar en la medida de lo posible las distintas partes del código (métodos públicos, privados...) y su funcionalidad
+
+	# Buscar cómo registrar el programa final como una versión en Git (mediante tags, creo).

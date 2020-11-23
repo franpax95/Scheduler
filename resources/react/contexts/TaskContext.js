@@ -32,7 +32,7 @@ const Provider = ({ children }) => {
         return tasksIncremented;
     }
 
-    const reorderTasks = (startIndex, endIndex) => {
+    const swapTasks = (startIndex, endIndex) => {
         const newTasks = Array.from(tasks);
         const [removed] = newTasks.splice(startIndex, 1);
         newTasks.splice(endIndex, 0, removed);
@@ -131,15 +131,25 @@ const Provider = ({ children }) => {
     }
 
 
-    // swap 2 task order
-    const swapTasks = async (startIndex, endIndex) => {
+    // insert a task in a new position and update the rest of them
+    const reorderTasks = async (order, newOrder) => {
         const oldTasks = Array.from(tasks);
+
+        console.log(newOrder);
         
         setLoading(true);
         try {
-            setTasks(reorderTasks(startIndex, endIndex));
+            //setTasks(incrementTasks(order, newOrder));
+            const task_id = tasks[order].id;
 
-            await axios.post(`/api/tasks/reorder/${scheduleId}`, { startIndex, endIndex }, config());
+
+            await axios.post(`/api/tasks/reorder/${scheduleId}`, { 
+                task_id, 
+                order: newOrder 
+            }, config());
+
+            const { data: { success: updatedTasks } } = await axios.get(`/api/tasks/${scheduleId}`, config());
+            setTasks(updatedTasks);
 
             setToastSuccess('Tasks reorder successfully');
         }catch(error) {
@@ -177,7 +187,7 @@ const Provider = ({ children }) => {
      */
     const value = {
         loading, error, tasks, toastSuccess, toastError, scheduleId,
-        getTasks, submitTask, deleteTask, changeSchedule, changeTask, swapTasks, addTask, resetToasts
+        getTasks, submitTask, deleteTask, changeSchedule, changeTask, reorderTasks, addTask, resetToasts
     };
 
     return <Context.Provider value={value}>{children}</Context.Provider>;

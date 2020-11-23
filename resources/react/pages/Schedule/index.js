@@ -18,7 +18,7 @@ const Schedule = props => {
     const { loading, error, schedule, getSchedule } = useContext(ScheduleContext);
     const { 
         loading: taskLoading, error: taskError, tasks, toastSuccess, toastError, scheduleId,
-        getTasks, submitTask, deleteTask, changeSchedule, changeTask, swapTasks, addTask, resetToasts
+        getTasks, submitTask, deleteTask, changeSchedule, changeTask, reorderTasks, addTask, resetToasts
     } = useContext(TaskContext);
 
     const listWrapperRef = useRef();
@@ -87,7 +87,7 @@ const Schedule = props => {
             return;
         }
 
-        swapTasks(result.source.index, result.destination.index);
+        reorderTasks(result.source.index, result.destination.index);
     }
 
 

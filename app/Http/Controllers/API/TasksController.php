@@ -93,43 +93,33 @@ class TasksController extends Controller
      * update two tasks order
      */
     public function reorder($schedule_id, Request $request) {
-        if($request->newOrder != $request->currentOrder) {
-            $task = Task::where([
-                'schedule_id', '=', $schedule_id,
-                'order', '=', $request->currentOrder
-            ]);
-    
-            // $request tendrá currentOrder que es el orden antiguo y newOrder que es la nueva posición
-            if($request->newOrder < $request->currentOrder) {
-                DB::raw('UPDATE tasks SET tasks.order = tasks.order + 1 WHERE tasks.schedule_id = ' + $schedule_id + ' AND tasks.order >= ' + $request->newOrder + ' AND tasks.order < ' + $request->currentOrder);
-            } else if($request->newOrder > $request->currentOrder) {
-                DB::raw('UPDATE tasks SET tasks.order = tasks.order - 1 WHERE tasks.schedule_id = ' + $schedule_id + ' AND tasks.order >= ' + $request->currentOrder + ' AND tasks.order < ' + $request->newOrder);
+        try{
+            $task = Task::findOrFail($request->task_id);
+            $order = intval($request->order);
+
+            if($order != $task->order) {
+                if($order < $task->order) {
+                    DB::table('tasks')
+                        ->where('schedule_id', $schedule_id)
+                        ->where('order', '>=', $order)
+                        ->where('order', '<', $task->order)
+                        ->increment('order');
+                } else if($order > $task->order) {
+                    DB::table('tasks')
+                        ->where('schedule_id', $schedule_id)
+                        ->where('order', '>=', $task->order)
+                        ->where('order', '<', $order)
+                        ->decrement('order');
+                }
+
+                $task->order = $order;
+                $task->save();
             }
 
-            $task->order = $request->newOrder;
-            $task->save();
-    
-            // $startTask = Task::where([
-            //     ['schedule_id', '=', $schedule_id],
-            //     ['order', '=', $request->currentOrder]
-            // ])->first();
-    
-            // $endTask = Task::where([
-            //     ['schedule_id', '=', $schedule_id],
-            //     ['order', '=', $request->endIndex]
-            // ])->first();
-    
-    
-            // $startTask->order = $request->endIndex;
-            // $endTask->order = $request->startIndex;
-    
-            // $startTask->save();
-            // $endTask->save();
-    
-    
             return response()->json(['success' => null]);
-        } else {
-            return response()->json(['success' => null]);
+
+        }catch(ModelNotFoundException $e) {
+            return response()->json(['error' => 'There is an error with the task id: does not exist'], 404);
         }
     }
 
