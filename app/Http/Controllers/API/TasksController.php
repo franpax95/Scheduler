@@ -19,32 +19,39 @@ class TasksController extends Controller
     public function get($schedule_id){
         $user = Auth::user();
 
-        try{
-            $sch = Schedule::findOrFail($schedule_id);
-            $tasks = Task::where('user_id', $user->id)
-                ->where('schedule_id', $schedule_id)
-                ->orderBy('order', 'asc')
-                ->get();
-            return response()->json(['success' => $tasks], 200);
-        }catch(ModelNotFoundException $e){
-            return response()->json(['error' => 'Unauthorized schedule tasks']);
+        $scheduleQuery = DB::table('schedules')->where('id', $schedule_id)->get();
+
+        if(count($scheduleQuery) == 0) {
+            return response()->json('Schedule does not exists.', 404);
+        } else if($scheduleQuery[0]->user_id != $user->id) {
+            return response()->json('Not authorized', 401);
         }
-        
+
+
+        $tasks = DB::table('tasks')
+                    ->where('schedule_id', $scheduleQuery[0]->id)
+                    ->orderBy('order', 'asc')
+                    ->get();
+
+        return response()->json($tasks, 200);
     }
 
     /**
      * Return a task find by id
      */
-    public function find(int $id){
-        $user = Auth::user();
+    // public function find(int $id){
+    //     $user = Auth::user();
 
-        try{
-            $task = Task::findOrFail($id);
-            return response()->json(['success' => $task]);
-        }catch(ModelNotFoundException $e){
-            return response()->json(['error' => 'The schedule does not exist']);
-        }
-    }
+    //     $taskQuery = DB::table('tasks')->where('id', $id)->get();
+
+    //     if(count($taskQuery) == 0) {
+    //         return response()->json('Task does not exists.', 404);
+    //     } else if($taskQuery[0]->user_id != $user->id) {
+    //         return response()->json('Not authorized', 401);
+    //     } else {
+    //         return response()->json($taskQuery[0], 200);
+    //     }
+    // }
 
     /**
      * store a new task
@@ -52,11 +59,13 @@ class TasksController extends Controller
     public function store(Request $request) {
         $user = Auth::user();
 
+        // Update order tasks from the same schedule (if last order it wont update anything)
         DB::table('tasks')
             ->where('schedule_id', $request->schedule_id)
             ->where('order', '>=', $request->order)
             ->increment('order');
-
+        
+        // Insert new task
         $id = DB::table('tasks')->insertGetId([
             'name' => $request->name,
             'completed' => $request->completed,
@@ -66,9 +75,10 @@ class TasksController extends Controller
             'created_at' => Carbon::now()
         ]);
 
-        $task = Task::find($id);
+        // Retrieve task
+        $task = DB::table('tasks')->find($id);
 
-        return response()->json(['success' => $task], 200);
+        return response()->json($task, 200);
     }
 
     
@@ -78,70 +88,108 @@ class TasksController extends Controller
     public function update($id, Request $request) {
         $user = Auth::user();
 
-        Task::where('id', $id)->update([
-            'name' => $request->name,
-            'completed' => $request->completed,
-            'updated_at' => Carbon::now()
-        ]);
-        $task = Task::find($id);
+        // Update task
+        DB::table('tasks')
+            ->where('id', $id)
+            ->update([
+                'name' => $request->name,
+                'completed' => $request->completed,
+                'updated_at' => Carbon::now()
+            ]);
 
-        return response()->json(['success' => $task], 200);
+        // Retrieve new task
+        $task = DB::table('tasks')->find($id);
+
+        return response()->json($task, 200);
     }
 
     
     /**
-     * update two tasks order
+     * update tasks order
      */
     public function reorder($schedule_id, Request $request) {
-        try{
-            $task = Task::findOrFail($request->task_id);
-            $newOrder = intval($request->order);
-            $oldOrder = $task->order;
+        $user = Auth::user();
 
-            if($newOrder != $task->order) {
-                if($newOrder < $oldOrder) {
-                    DB::table('tasks')
-                        ->where('schedule_id', $schedule_id)
-                        ->where('order', '>=', $newOrder)
-                        ->where('order', '<', $oldOrder)
-                        ->increment('order');
-                } else if($newOrder > $oldOrder) {
-                    DB::table('tasks')
-                        ->where('schedule_id', $schedule_id)
-                        ->where('order', '>', $oldOrder)
-                        ->where('order', '<=', $newOrder)
-                        ->decrement('order');
-                }
+        // Check schedule_id
+        $scheduleQuery = DB::table('schedules')->where('id', $schedule_id)->get();
+        if(count($scheduleQuery) == 0) {
+            return response()->json('Schedule does not exists.', 404);
+        } else if($scheduleQuery[0]->user_id != $user->id) {
+            return response()->json('Not authorized', 401);
+        }
+        $schedule = $scheduleQuery[0];
+        
+        // Retrieve & Check task
+        $taskQuery = DB::table('tasks')->where('id', $request->id)->get();
+        if(count($taskQuery) == 0) {
+            return response()->json('Task does not exists.', 404);
+        } else if($taskQuery[0]->user_id != $user->id) {
+            return response()->json('Not authorized', 401);
+        } else if($taskQuery[0]->schedule_id != $schedule->id) {
+            return response()->json('Task does not belong to Schedule', 403);
+        }
+        $task = $taskQuery[0];
 
-                $task->order = $newOrder;
-                $task->save();
+        // Update logic
+        $newOrder = intval($request->order);
+        $oldOrder = $task->order;
+
+        if($newOrder != $oldOrder) {
+            if($newOrder < $oldOrder) {
+                DB::table('tasks')
+                    ->where('schedule_id', $schedule_id)
+                    ->where('order', '>=', $newOrder)
+                    ->where('order', '<', $oldOrder)
+                    ->increment('order');
+            } else if($newOrder > $oldOrder) {
+                DB::table('tasks')
+                    ->where('schedule_id', $schedule_id)
+                    ->where('order', '>', $oldOrder)
+                    ->where('order', '<=', $newOrder)
+                    ->decrement('order');
             }
 
-            return response()->json(['success' => null]);
-
-        }catch(ModelNotFoundException $e) {
-            return response()->json(['error' => 'There is an error with the task id: does not exist'], 404);
+            DB::table('tasks')
+                ->where('id', $task->id)
+                ->update(['order' => $newOrder]);
         }
+
+        // Get updated tasks
+        $tasks = DB::table('tasks')
+                    ->where('schedule_id', $schedule->id)
+                    ->orderBy('order', 'asc')
+                    ->get();
+
+        return response()->json($tasks, 200);
     }
 
     /**
      * delete a task
      */
     public function delete($id) {
-        try{
-            $task = Task::findOrFail($id);
-
-            DB::table('tasks')
-                ->where('schedule_id', $task->schedule_id)
-                ->where('order', '>', $task->order)
-                ->decrement('order');
-
-            $task->delete();
-
-            return response()->json(null, 204);
-
-        }catch(ModelNotFoundException $e) {
-            return response()->json(['error' => 'The task does not exist'], 404);
+        // Retrieve & Check task
+        $taskQuery = DB::table('tasks')->where('id', $request->id)->get();
+        if(count($taskQuery) == 0) {
+            return response()->json('Task does not exists.', 404);
+        } else if($taskQuery[0]->user_id != $user->id) {
+            return response()->json('Not authorized', 401);
+        } else if($taskQuery[0]->schedule_id != $schedule->id) {
+            return response()->json('Task does not belong to Schedule', 403);
         }
+        $task = $taskQuery[0];
+
+        // Decrement some tasks order
+        DB::table('tasks')
+            ->where('schedule_id', $task->schedule_id)
+            ->where('order', '>', $task->order)
+            ->decrement('order');
+
+        // Delete task
+        DB::table('tasks')->where('id', $task->id)->delete();
+
+        // Get updated tasks
+        $updatedTasks = DB::table('tasks')->where('schedule_id', $task->schedule_id)->orderBy('order', 'asc')->get();
+
+        return response()->json($updatedTasks, 200);
     }
 }
